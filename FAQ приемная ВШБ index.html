@@ -1,0 +1,537 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>FAQ приёмной комиссии · ВШБ МГУ</title>
+<style>
+  :root{
+    --navy:#13132a; --navy2:#1d1d3d; --ink:#23232f; --grey:#5b5b66; --lgrey:#8a8a96;
+    --orange:#E35205; --orange-dk:#b8420a; --orange-soft:#ff7a3c;
+    --tint:#fcefe7; --tint2:#fff6f1; --line:#ece7e2; --bg:#f6f3ef; --card:#ffffff;
+    --green:#2e7d52; --shadow:0 4px 20px rgba(20,20,40,.07);
+    --r:14px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{font-family:'Inter','Segoe UI',system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--ink);line-height:1.55;-webkit-font-smoothing:antialiased}
+  .wrap{display:grid;grid-template-columns:268px 1fr;min-height:100vh}
+
+  /* sidebar */
+  aside{background:var(--navy);color:#fff;padding:0;position:sticky;top:0;height:100vh;overflow-y:auto;display:flex;flex-direction:column}
+  .brand{padding:24px 24px 18px;border-bottom:1px solid rgba(255,255,255,.08)}
+  .brand .logo{display:flex;align-items:center;gap:11px;margin-bottom:4px}
+  .brand .mark{width:38px;height:38px;border-radius:10px;background:var(--orange);display:grid;place-items:center;font-weight:800;font-size:17px;flex-shrink:0}
+  .brand h1{font-size:15px;font-weight:700;letter-spacing:.2px;line-height:1.25}
+  .brand .sub{font-size:11.5px;color:var(--lgrey);margin-top:7px;letter-spacing:.3px}
+  nav{padding:14px 14px 8px;flex:1}
+  nav .navlabel{font-size:10.5px;text-transform:uppercase;letter-spacing:1.4px;color:var(--lgrey);padding:8px 12px 6px}
+  nav a{display:flex;align-items:center;gap:11px;padding:10px 12px;border-radius:10px;color:#d7d7e2;text-decoration:none;font-size:13.5px;font-weight:500;transition:background .15s,color .15s;cursor:pointer}
+  nav a .num{width:21px;height:21px;border-radius:6px;background:rgba(255,255,255,.08);display:grid;place-items:center;font-size:11px;font-weight:700;color:var(--orange-soft);flex-shrink:0}
+  nav a:hover{background:rgba(255,255,255,.06);color:#fff}
+  nav a.active{background:var(--orange);color:#fff}
+  nav a.active .num{background:rgba(255,255,255,.2);color:#fff}
+  .sidefoot{padding:16px 22px 22px;border-top:1px solid rgba(255,255,255,.08);font-size:11.5px;color:var(--lgrey);line-height:1.5}
+  .sidefoot b{color:#fff;font-weight:600}
+
+  /* main */
+  main{padding:0;max-width:920px}
+  .topbar{position:sticky;top:0;z-index:20;background:rgba(246,243,239,.92);backdrop-filter:blur(10px);padding:22px 40px 18px;border-bottom:1px solid var(--line)}
+  .searchrow{display:flex;gap:12px;align-items:center}
+  .search{flex:1;position:relative}
+  .search input{width:100%;padding:14px 16px 14px 46px;border:1.5px solid var(--line);border-radius:12px;font-size:15px;background:var(--card);transition:border .15s,box-shadow .15s;font-family:inherit}
+  .search input:focus{outline:none;border-color:var(--orange);box-shadow:0 0 0 4px rgba(227,82,5,.1)}
+  .search svg{position:absolute;left:16px;top:50%;transform:translateY(-50%);color:var(--lgrey)}
+  .addbtn{padding:14px 18px;background:var(--navy);color:#fff;border:none;border-radius:12px;font-size:13.5px;font-weight:600;cursor:pointer;white-space:nowrap;font-family:inherit;display:flex;align-items:center;gap:7px;transition:background .15s}
+  .addbtn:hover{background:var(--navy2)}
+  .meta{display:flex;gap:18px;margin-top:13px;font-size:12px;color:var(--grey);flex-wrap:wrap}
+  .meta span{display:flex;align-items:center;gap:6px}
+  .dot{width:6px;height:6px;border-radius:50%;background:var(--green)}
+
+  .content{padding:30px 40px 80px}
+  .sec{margin-bottom:42px;scroll-margin-top:160px}
+  .sechead{display:flex;align-items:center;gap:13px;margin-bottom:18px}
+  .sechead .ico{width:34px;height:34px;border-radius:9px;background:var(--tint);display:grid;place-items:center;flex-shrink:0}
+  .sechead h2{font-size:19px;font-weight:750;letter-spacing:-.2px;color:var(--navy)}
+  .sechead .cnt{margin-left:auto;font-size:11.5px;color:var(--lgrey);background:var(--card);padding:4px 11px;border-radius:20px;border:1px solid var(--line);font-weight:600}
+
+  .qa{background:var(--card);border:1px solid var(--line);border-radius:var(--r);margin-bottom:11px;overflow:hidden;transition:border-color .15s,box-shadow .15s}
+  .qa:hover{border-color:#dfd8d1}
+  .qa.open{box-shadow:var(--shadow);border-color:var(--tint)}
+  .qa .q{padding:17px 20px;display:flex;align-items:flex-start;gap:13px;cursor:pointer;user-select:none}
+  .qa .q .qt{font-weight:600;font-size:14.5px;color:var(--ink);flex:1;line-height:1.45}
+  .qa .q .chev{color:var(--lgrey);flex-shrink:0;transition:transform .2s;margin-top:2px}
+  .qa.open .q .chev{transform:rotate(180deg);color:var(--orange)}
+  .qa .a{max-height:0;overflow:hidden;transition:max-height .25s ease}
+  .qa .a-inner{padding:0 20px 19px 53px;font-size:14px;color:var(--grey);line-height:1.62}
+  .qa .a-inner a{color:var(--orange-dk);text-decoration:none;border-bottom:1px solid rgba(227,82,5,.3)}
+  .qa .a-inner a:hover{border-color:var(--orange-dk)}
+  .qa .a-inner strong{color:var(--ink);font-weight:650}
+  .qa .a-inner .tag{display:inline-block;background:var(--tint);color:var(--orange-dk);font-size:11px;font-weight:600;padding:2px 9px;border-radius:5px;margin-top:11px}
+  .qa .a-inner ul{margin:8px 0 4px;padding-left:19px}
+  .qa .a-inner li{margin-bottom:5px}
+  .qa .a-inner .num-hl{background:var(--tint2);border:1px solid var(--tint);border-radius:9px;padding:11px 14px;margin:11px 0 3px;color:var(--ink);font-size:13.5px}
+  .custom-badge{display:inline-flex;align-items:center;gap:4px;background:#eaf5ef;color:var(--green);font-size:10.5px;font-weight:700;padding:2px 8px;border-radius:5px;margin-left:9px;letter-spacing:.3px;vertical-align:middle}
+  .verify-badge{display:inline-flex;align-items:center;gap:4px;background:#fff4d6;color:#9a6700;font-size:10.5px;font-weight:700;padding:2px 8px;border-radius:5px;margin-left:9px;letter-spacing:.3px;vertical-align:middle}
+  .verify-note{background:#fffbf0;border:1px solid #ffe9b0;border-left:3px solid #e0a800;border-radius:9px;padding:10px 13px;margin:11px 0 3px;color:#7a5b00;font-size:13px;line-height:1.5}
+  .verify-note strong{color:#5e4600}
+  .qa .del{background:none;border:none;color:var(--lgrey);cursor:pointer;font-size:12px;padding:4px 8px;border-radius:6px;margin-left:auto;font-family:inherit}
+  .qa .del:hover{background:#fbecea;color:#c0392b}
+
+  .empty{text-align:center;padding:60px 20px;color:var(--lgrey)}
+  .empty svg{margin-bottom:14px;opacity:.5}
+  .empty p{font-size:14px}
+
+  /* modal */
+  .modal-bg{position:fixed;inset:0;background:rgba(19,19,42,.5);backdrop-filter:blur(3px);display:none;align-items:center;justify-content:center;z-index:100;padding:20px}
+  .modal-bg.show{display:flex}
+  .modal{background:var(--card);border-radius:18px;padding:28px;width:100%;max-width:540px;box-shadow:0 20px 60px rgba(0,0,0,.3)}
+  .modal h3{font-size:18px;font-weight:750;color:var(--navy);margin-bottom:5px}
+  .modal .msub{font-size:13px;color:var(--grey);margin-bottom:20px}
+  .modal label{display:block;font-size:12.5px;font-weight:600;color:var(--ink);margin-bottom:7px;margin-top:15px}
+  .modal input,.modal textarea,.modal select{width:100%;padding:11px 13px;border:1.5px solid var(--line);border-radius:10px;font-size:14px;font-family:inherit;transition:border .15s}
+  .modal input:focus,.modal textarea:focus,.modal select:focus{outline:none;border-color:var(--orange)}
+  .modal textarea{resize:vertical;min-height:90px;line-height:1.5}
+  .modal .hint{font-size:11.5px;color:var(--lgrey);margin-top:5px}
+  .modal-actions{display:flex;gap:10px;margin-top:24px;justify-content:flex-end}
+  .btn-ghost{padding:11px 18px;background:none;border:1.5px solid var(--line);border-radius:10px;font-size:13.5px;font-weight:600;cursor:pointer;font-family:inherit;color:var(--grey)}
+  .btn-ghost:hover{border-color:var(--lgrey)}
+  .btn-primary{padding:11px 20px;background:var(--orange);color:#fff;border:none;border-radius:10px;font-size:13.5px;font-weight:600;cursor:pointer;font-family:inherit}
+  .btn-primary:hover{background:var(--orange-dk)}
+
+  .toast{position:fixed;bottom:26px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--navy);color:#fff;padding:13px 22px;border-radius:11px;font-size:13.5px;font-weight:500;box-shadow:0 10px 30px rgba(0,0,0,.25);transition:transform .3s;z-index:200;display:flex;align-items:center;gap:9px}
+  .toast.show{transform:translateX(-50%) translateY(0)}
+
+  mark{background:#ffe6b0;color:inherit;padding:0 1px;border-radius:2px}
+
+  /* verify checklist section */
+  .checklist{background:linear-gradient(180deg,#fffbf0,#fff);border:1px solid #ffe9b0;border-radius:var(--r);padding:22px 24px;margin-top:8px}
+  .checklist .ch-head{display:flex;align-items:center;gap:11px;margin-bottom:6px}
+  .checklist .ch-head .ico{width:32px;height:32px;border-radius:9px;background:#fff4d6;display:grid;place-items:center;flex-shrink:0;font-size:16px}
+  .checklist h2{font-size:18px;font-weight:750;color:#7a5b00}
+  .checklist .ch-sub{font-size:13px;color:#9a7b3a;margin-bottom:16px;padding-left:43px}
+  .ch-item{display:flex;gap:12px;padding:13px 0;border-top:1px solid #f3e6c0}
+  .ch-item:first-of-type{border-top:none}
+  .ch-check{width:20px;height:20px;border:2px solid #d9b85c;border-radius:6px;flex-shrink:0;margin-top:2px;cursor:pointer;display:grid;place-items:center;transition:background .15s,border-color .15s}
+  .ch-check.done{background:var(--green);border-color:var(--green)}
+  .ch-check svg{opacity:0;transition:opacity .15s}
+  .ch-check.done svg{opacity:1}
+  .ch-body{flex:1}
+  .ch-body.done .ch-q{text-decoration:line-through;color:var(--lgrey)}
+  .ch-q{font-weight:650;font-size:14px;color:var(--ink);margin-bottom:3px}
+  .ch-q .loc{font-size:11px;font-weight:600;color:#9a6700;background:#fff4d6;padding:1px 7px;border-radius:5px;margin-right:7px;vertical-align:middle}
+  .ch-why{font-size:13px;color:var(--grey);line-height:1.5}
+
+  @media(max-width:860px){
+    .wrap{grid-template-columns:1fr}
+    aside{position:fixed;left:-280px;width:268px;z-index:50;transition:left .25s}
+    aside.open{left:0}
+    main{max-width:100%}
+    .topbar{padding:16px 18px 14px}
+    .content{padding:22px 18px 70px}
+    .menubtn{display:grid!important}
+  }
+  .menubtn{display:none;place-items:center;width:44px;height:44px;border-radius:11px;background:var(--navy);color:#fff;border:none;cursor:pointer;flex-shrink:0}
+  .scrim{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:40}
+  .scrim.show{display:block}
+</style>
+
+<div class="wrap">
+  <aside id="sidebar">
+    <div class="brand">
+      <div class="logo">
+        <div class="mark">ВШ</div>
+        <h1>Приёмная комиссия<br>ВШБ МГУ</h1>
+      </div>
+      <div class="sub">СПРАВОЧНИК КОНСУЛЬТАНТА · 2026</div>
+    </div>
+    <nav id="nav"></nav>
+    <div class="sidefoot">
+      <b>Денисова Дарья</b> — отв. секретарь<br>
+      +7 (495) 939-21-03<br>
+      admission@edu.mgubs.ru<br>
+      <span style="color:var(--lgrey)">Ленинские горы, д. 1, стр. 52</span>
+    </div>
+  </aside>
+  <div class="scrim" id="scrim"></div>
+
+  <main>
+    <div class="topbar">
+      <div class="searchrow">
+        <button class="menubtn" id="menubtn" aria-label="Меню">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        </button>
+        <div class="search">
+          <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input id="search" placeholder="Поиск по вопросам — например «общежитие», «ДВИ», «кредит»…" autocomplete="off">
+        </div>
+        <button class="addbtn" id="addbtn">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Свой вопрос
+        </button>
+      </div>
+      <div class="meta">
+        <span><span class="dot"></span> Данные с mgubs.ru на июнь 2026</span>
+        <span>Подача документов: <strong style="color:var(--ink);margin-left:3px">20 июня — 15 июля</strong></span>
+        <span id="customcount"></span>
+      </div>
+    </div>
+
+    <div class="content" id="content"></div>
+  </main>
+</div>
+
+<!-- Add modal -->
+<div class="modal-bg" id="modalbg">
+  <div class="modal">
+    <h3>Добавить свой вопрос</h3>
+    <p class="msub">Сохранится на этом устройстве. Удобно записывать новые вопросы прямо за стойкой.</p>
+    <label>Раздел</label>
+    <select id="m-section"></select>
+    <label>Вопрос</label>
+    <input id="m-q" placeholder="Например: Можно ли перевестись из другого вуза на 1 курс?">
+    <label>Ответ</label>
+    <textarea id="m-a" placeholder="Запишите ответ, как обычно отвечаете абитуриенту…"></textarea>
+    <div class="hint">Поддерживается перенос строк. Ссылки вставляйте как обычный текст.</div>
+    <div class="modal-actions">
+      <button class="btn-ghost" id="m-cancel">Отмена</button>
+      <button class="btn-primary" id="m-save">Сохранить вопрос</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ---------- DATA: built from official mgubs.ru (June 2026) ----------
+const SECTIONS = [
+  {id:'docs', n:1, icon:'📄', title:'Подача документов и сроки', items:[
+    {q:'Когда подавать документы на бакалавриат?',
+     a:'Приём документов идёт <strong>20 июня — 15 июля 2026</strong>. Для поступающих БВИ (без вступительных испытаний) — до 25 июля 17:00.<div class="num-hl"><strong>Важно для иностранцев:</strong> у них срок короче — <strong>с 20 по 25 июня</strong>. Личный кабинет на webanketa.msu.ru открыт с 1 по 25 июня.</div>'},
+    {q:'Какие документы нужны (граждане РФ)?',
+     a:'<ul><li>Скан паспорта (разворот с ФИО и датой рождения + страница с регистрацией)</li><li>Скан аттестата с приложением оценок</li><li>Фото 3×4 см, сделанное в 2026 году, без головного убора</li><li>Скан СНИЛС</li><li>Документы об индивидуальных достижениях (дипломы олимпиад — при наличии)</li></ul>'},
+    {q:'Как можно подать документы — какими способами?',
+     a:'Три способа:<ul><li><strong>Онлайн</strong> через суперсервис «Поступление в вуз онлайн» на Госуслугах (gosuslugi.ru/vuzonline)</li><li><strong>Лично</strong> в приёмную комиссию: Ленинские горы, д. 1, стр. 52 (заявление заполняется в ЕПГУ с компьютера факультета)</li><li><strong>Почтой</strong> — отправлением с уведомлением о вручении и описью вложения</li></ul>'},
+    {q:'Можно подать, если результаты ЕГЭ ещё не известны?',
+     a:'Да. При заполнении заявления на webanketa.msu.ru укажите, что сдаёте ЕГЭ «в текущем году». Дожидаться результатов не нужно.'},
+    {q:'Когда публикуются конкурсные списки?',
+     a:'С <strong>27 июля 2026</strong>. В список попадают все, кто получил положительный балл на испытаниях. Ранжируются по убыванию суммы баллов (4 экзамена + индивидуальные достижения). Списки обновляются ежедневно на сайте ЦПК (cpk.msu.ru) с учётом поданных согласий.'},
+    {q:'Какие сроки зачисления?',
+     a:'<strong>27 июля — 15 августа.</strong> До 15 августа 12:00 мск нужно заключить договор на обучение и подать информирование о зачислении. Приказ о зачислении издаётся с 1 сентября — после заключения договора и оплаты первого семестра.'},
+    {q:'Можно ли перевестись из другого вуза?',
+     a:'Да, но только для студентов <strong>государственных вузов</strong> без академических задолженностей, по специальности 38.03.02 «Менеджмент» (или близкой), при наличии вакантных мест.<div class="num-hl">Перевод возможен <strong>только на 2-й и 3-й курс.</strong> Нужно сдать аттестационные испытания по менеджменту и английскому.</div>'},
+    {q:'Как восстановиться после отчисления?',
+     a:'По личному заявлению (пишется <strong>строго от руки</strong> на имя ректора), при успешной сдаче аттестационных экзаменов и положительном решении ЦПК. Сроки подачи: 20 июня — 15 июля. Нужны: заявление, копия документа об образовании, копия паспорта, сведения о баллах ЕГЭ.'},
+  ]},
+
+  {id:'dvi', n:2, icon:'📝', title:'ДВИ, экзамены и баллы', items:[
+    {q:'Какие вступительные испытания нужно сдавать?',
+     a:'Поступление по <strong>ЕГЭ + ДВИ</strong>:<ul><li>Математика (профильная) — ЕГЭ</li><li>Русский язык — ЕГЭ</li><li>Иностранный язык <em>или</em> обществознание (на выбор) — ЕГЭ</li><li><strong>ДВИ по математике (письменно)</strong> — обязательно</li></ul>Засчитываются результаты ЕГЭ за 2022–2026 годы.'},
+    {q:'Обязательно ли ДВИ или хватит только ЕГЭ?',
+     a:'ДВИ по математике <strong>обязательно для всех</strong>. Без него поступить нельзя — даже с высокими баллами ЕГЭ.'},
+    {q:'В каком формате проходит ДВИ?',
+     a:'ДВИ по математике проходит <strong>дистанционно (онлайн)</strong>, в несколько потоков. Период проведения испытаний: <strong>11–25 июля</strong>.<div class="num-hl">Абитуриент <strong>не выбирает</strong> поток — распределение идёт централизованно через ЦПК после подачи документов. Записи на экзамен через Госуслуги нет.</div>'},
+    {q:'Как узнать свой поток и дату ДВИ?',
+     a:'Расписание ДВИ опубликовано на сайте ВШБ. Пофамильные списки по потокам ЦПК публикует <strong>не позднее чем за день</strong> до экзамена на cpk.msu.ru. Абитуриент сам отслеживает списки, чтобы найти свой поток.'},
+    {q:'Где взять примеры заданий ДВИ?',
+     a:'Примеры заданий ДВИ по математике прошлых лет с решениями — на сайте Центральной приёмной комиссии МГУ:<div class="num-hl"><a href="https://cpk.msu.ru/entrance/2022"><strong>cpk.msu.ru/entrance</strong></a> — варианты и разборы по годам.</div>'},
+    {q:'Какой минимальный балл ДВИ?',
+     a:'ДВИ оценивается по 100-балльной шкале. Минимальный балл устанавливается на уровне минимума Рособрнадзора и публикуется в <a href="https://cpk.msu.ru/files/2026/rules.pdf">правилах приёма МГУ-2026 (PDF)</a>. Точный порог за текущий год — там.'},
+    {q:'Дают ли 100 баллов за ДВИ за олимпиаду по математике?',
+     verify:'Уточнить механику: засчитывается ли победа/призёрство в олимпиаде по профильной математике как 100 баллов за ДВИ, или это работает только как БВИ / особое право. Разные вещи — не путать абитуриентов.',
+     a:'Победители и призёры олимпиад из перечня Минобрнауки получают особые права при поступлении (при ЕГЭ ≥75 по профильному предмету). Как именно это конвертируется в балл ДВИ — нужно сверить с правилами приёма текущего года.'},
+    {q:'Можно ли сдавать вместо ЕГЭ внутренние экзамены МГУ?',
+     a:'Да, но только для отдельных категорий:<ul><li>абитуриенты с ОВЗ</li><li>иностранные граждане</li><li>выпускники иностранных школ</li><li>поступающие на базе профильного СПО</li></ul>Они сдают математику, русский, ин.яз/обществознание + ДВИ — экзаменами МГУ вместо ЕГЭ.'},
+    {q:'Кто может поступить без экзаменов (БВИ)?',
+     a:'Победители и призёры <strong>заключительного этапа Всероссийской олимпиады школьников</strong> — принимаются без вступительных испытаний. Победителям/призёрам олимпиад из перечня Минобрнауки даются особые права при наличии ЕГЭ не ниже 75 баллов по профильному предмету.'},
+    {q:'Какие баллы дают за индивидуальные достижения?',
+     verify:'Сверить актуальность цифр с правилами приёма МГУ-2026 (cpk.msu.ru). Перечень и баллы могут уточняться год к году.',
+     a:'<ul><li><strong>10</strong> — победитель олимпиады 1 уровня (перечень Минобрнауки, 11 класс)</li><li><strong>6</strong> — аттестат/диплом СПО с отличием; призёр олимпиады 1 уровня</li><li><strong>4</strong> — победитель олимпиады 2 уровня</li><li><strong>2</strong> — значок ГТО; итоговое сочинение; призёр олимпиады 2 уровня</li></ul>'},
+    {q:'Какие были проходные баллы в прошлые годы?',
+     a:'Проходной балл (по 4 экзаменам) и средний балл поступивших растут год от года:<ul><li><strong>2023:</strong> проходной 253, средний 291 (зачислено 111)</li><li><strong>2024:</strong> проходной 281, средний 316 (зачислено 107)</li><li><strong>2025:</strong> проходной 309, средний 331 (зачислено 60)</li></ul><div class="num-hl">Конкурс растёт: в 2025 подали 1500 заявлений. Это полезно проговаривать родителям, которые спрашивают «а сложно ли поступить».</div>'},
+  ]},
+
+  {id:'money', n:3, icon:'₽', title:'Стоимость и оплата', items:[
+    {q:'Сколько стоит обучение?',
+     a:'<ul><li><strong>Граждане РФ:</strong> 1 470 000 ₽ / год (735 000 ₽ за семестр)</li><li><strong>Иностранные граждане:</strong> 1 500 000 ₽ / год (750 000 ₽ за семестр)</li></ul>Оплата производится по семестрам.'},
+    {q:'Есть ли бюджетные места?',
+     a:'<strong>Нет.</strong> В ВШБ МГУ только внебюджетная (платная) форма обучения. Это первый вопрос, который стоит прояснять с родителями, ожидающими бюджет.'},
+    {q:'Как оплатить обучение?',
+     a:'После подписания договора вам высылают квитанцию. Оплатить можно через банковское приложение или в офисе банка. Инструкции по оплате (Сбербанк Онлайн, физлицо, юрлицо, для иностранцев) есть в разделе FAQ на сайте ВШБ.'},
+    {q:'Как получить образовательный кредит?',
+     a:'<div class="num-hl"><strong>Важно (с 2026):</strong> льготный образовательный кредит под 3% с господдержкой <strong>больше не выдаётся на менеджмент</strong> (а также экономику и юриспруденцию) — распоряжение Правительства №3326-Р. Менеджмент не входит в перечень приоритетных направлений.</div>Доступен только <strong>обычный</strong> образовательный или потребительский кредит — на условиях банка, без льготной ставки. Для оформления нужен <strong>подписанный и зарегистрированный договор на обучение</strong> (сначала договор — потом кредит).<br><span class="tag">Кто взял раньше</span> Те, кто оформил льготный кредит до изменения правил, продолжают пользоваться им на прежних условиях — задним числом ничего не отменяется.'},
+    {q:'Сколько стоит общежитие?',
+     a:'<ul><li>Граждане РФ — <strong>12 510 ₽ / месяц</strong></li><li>Иностранные граждане — <strong>14 820 ₽ / месяц</strong></li></ul>Предоставляется на платной основе при наличии свободного фонда.'},
+  ]},
+
+  {id:'life', n:4, icon:'🏠', title:'Общежитие, быт, иностранцы', items:[
+    {q:'Дают ли общежитие иногородним?',
+     verify:'Уточнить точную формулировку зоны: сайт пишет «за пределами Москвы и МО», на практике называют «за пределами 5-й зоны». Это разные критерии.',
+     a:'Да — иногородним при наличии свободного жилого фонда. На сайте формулировка — <strong>проживающим за пределами Москвы и МО</strong>.<div class="num-hl">Чтобы получить место: <strong>до 15 августа</strong> отправить заявку на <a href="mailto:admission@edu.mgubs.ru">admission@edu.mgubs.ru</a>. Указать ФИО, телефон, приложить скан паспорта (первая страница + регистрация).</div>'},
+    {q:'Какие документы нужны иностранному абитуриенту?',
+     a:'<ul><li>Копия документа, удостоверяющего личность и гражданство (по которому въезжают в РФ)</li><li>Оригинал/копия аттестата по требованиям МГУ к иностранным документам</li><li>Фото 3×4 см, сделанное в 2026 году, на матовой бумаге</li></ul><strong>Документы на ин. языке</strong> переводятся на русский, перевод заверяется нотариально. Нужно свидетельство о признании иностранного образования (Росаккредагентство, nic.gov.ru) или личное заявление о признании.'},
+    {q:'Какие испытания сдают иностранцы?',
+     a:'Если у иностранного абитуриента <strong>нет результатов ЕГЭ</strong> — он сдаёт два собеседования:<ul><li>Русский язык (собеседование)</li><li>Математика (собеседование)</li></ul>Проводятся после 25 июня. Если ЕГЭ по предмету есть — можно использовать его и не сдавать собеседование.'},
+    {q:'Помогают ли иностранцам с визой?',
+     a:'Да. По вопросам получения/продления визы — писать в приёмную комиссию на <a href="mailto:admission@edu.mgubs.ru">admission@edu.mgubs.ru</a>. Иностранцам рекомендуется приобрести полис ДМС — список аккредитованных страховых на studentin.msu.ru/medicine.'},
+    {q:'Какие справки нужны до начала учёбы?',
+     verify:'Уточнить: на сайте указаны две справки (о группе + об отсутствии противопоказаний), но на практике, возможно, обе выдаются на одном бланке формы 086у. Свериться, чтобы не путать абитуриентов.',
+     a:'Для допуска к физкультуре все первокурсники до начала учёбы сдают: 1) справку о физкультурной группе; 2) справку об отсутствии противопоказаний (на основе формы 086у). Это к 1 сентября.'},
+  ]},
+
+  {id:'program', n:5, icon:'🎓', title:'О программе (для родителей)', items:[
+    {q:'Что за программа в бакалавриате?',
+     verify:'Проверить актуальность прямой ссылки на PDF учебного плана — старая ссылка может не открываться. Взять свежую с mgubs.ru/bachelor/.',
+     a:'Направление <strong>«Менеджмент» (38.03.02)</strong>, программа «Управление бизнесом и предпринимательство». Очная, 4 года. Актуальный учебный план — в разделе <a href="https://mgubs.ru/bachelor/">mgubs.ru/bachelor</a>. Это то, что чаще всего спрашивают родители, не дошедшие до Дня открытых дверей.'},
+    {q:'Какой иностранный язык изучают?',
+     a:'Основной — <strong>английский</strong>. Студенты сильнейшей группы по английскому могут дополнительно изучать испанский. При поступлении в качестве ин.яза принимаются ЕГЭ по английскому, немецкому, французскому, испанскому и китайскому.'},
+    {q:'Есть ли программы обмена за рубежом?',
+     verify:'Уточнить количество и список зарубежных партнёрских университетов / стажировок — на сайте указано только «с 3 курса», без чисел.',
+     a:'Да. Поехать в зарубежный партнёрский университет можно <strong>начиная с 3 курса</strong>. Точное число партнёров и направлений стоит уточнить отдельно.'},
+    {q:'Когда студенты проходят практику?',
+     a:'Практика бизнеса идёт <strong>все 4 года</strong>. Студентам помогают выбрать траекторию и предоставляют места в компаниях-партнёрах. Это сильный аргумент в разговоре с родителями про «а будет ли реальный опыт».'},
+    {q:'Есть ли военная кафедра?',
+     a:'Да. В весеннем семестре 2 курса все желающие подают заявление и сдают физнормативы (средний балл — не ниже 3,5). При успехе с 3 курса учатся по программам «солдат запаса» / «офицер запаса».'},
+    {q:'Есть ли подготовительные курсы для школьников?',
+     a:'Да — годовые курсы по математике и обществознанию. Присоединиться можно в <strong>сентябре и феврале</strong> через регистрационную форму на сайте.'},
+    {q:'Сколько вообще факультетов в МГУ?',
+     a:'Около <strong>40 факультетов</strong> (по официальной формулировке МГУ). ВШБ — один из них, основан в 2001 году. Если спросят точную цифру — расхождения 36/40/41 в разных источниках связаны с тем, считать ли школы-интернаты (СУНЦ) и подразделения без набора на бакалавриат.'},
+  ]},
+];
+
+// ---------- STATE ----------
+let customItems = {};   // {sectionId: [{q,a,id}]}
+let checkState = {};    // {checkIndex: bool}
+const STORE_KEY = 'vshb_faq_custom_v1';
+const CHECK_KEY = 'vshb_faq_checks_v1';
+
+async function loadCustom(){
+  try{
+    const r = await window.storage.get(STORE_KEY);
+    if(r && r.value) customItems = JSON.parse(r.value);
+  }catch(e){ customItems = {}; }
+  try{
+    const c = await window.storage.get(CHECK_KEY);
+    if(c && c.value) checkState = JSON.parse(c.value);
+  }catch(e){ checkState = {}; }
+}
+async function saveCustom(){
+  try{ await window.storage.set(STORE_KEY, JSON.stringify(customItems)); }
+  catch(e){ toast('Не удалось сохранить'); }
+}
+async function saveChecks(){
+  try{ await window.storage.set(CHECK_KEY, JSON.stringify(checkState)); }
+  catch(e){}
+}
+
+// ---------- RENDER ----------
+const nav = document.getElementById('nav');
+const content = document.getElementById('content');
+const mSection = document.getElementById('m-section');
+
+function buildNav(){
+  nav.innerHTML = '<div class="navlabel">Разделы по приоритету</div>';
+  SECTIONS.forEach((s,i)=>{
+    const a = document.createElement('a');
+    a.dataset.target = s.id;
+    a.innerHTML = `<span class="num">${s.n}</span> ${s.title}`;
+    a.onclick = ()=>{ document.getElementById('sec-'+s.id).scrollIntoView(); closeSidebar(); };
+    nav.appendChild(a);
+  });
+  // verify checklist link
+  const vcount = SECTIONS.reduce((n,s)=>n+s.items.filter(it=>it.verify).length,0);
+  if(vcount){
+    const va = document.createElement('a');
+    va.style.marginTop='6px';
+    va.innerHTML = `<span class="num" style="background:#fff4d6;color:#9a6700">⚠</span> На уточнении <span style="margin-left:auto;font-size:11px;color:var(--orange-soft);font-weight:700">${vcount}</span>`;
+    va.onclick = ()=>{ const el=document.getElementById('sec-verify'); if(el) el.scrollIntoView(); closeSidebar(); };
+    nav.appendChild(va);
+  }
+  mSection.innerHTML = SECTIONS.map(s=>`<option value="${s.id}">${s.title}</option>`).join('');
+}
+
+function escapeHtml(t){return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function nl2br(t){return escapeHtml(t).replace(/\n/g,'<br>');}
+
+function render(filter=''){
+  const f = filter.trim().toLowerCase();
+  content.innerHTML = '';
+  let totalShown = 0;
+
+  SECTIONS.forEach(s=>{
+    const custom = (customItems[s.id]||[]);
+    const all = [
+      ...s.items.map(it=>({...it, custom:false})),
+      ...custom.map(it=>({...it, custom:true}))
+    ];
+    const shown = f ? all.filter(it =>
+      (it.q+' '+it.a).toLowerCase().includes(f)) : all;
+    if(shown.length===0) return;
+    totalShown += shown.length;
+
+    const sec = document.createElement('section');
+    sec.className='sec'; sec.id='sec-'+s.id;
+    sec.innerHTML = `<div class="sechead">
+        <div class="ico">${s.icon}</div>
+        <h2>${s.title}</h2>
+        <span class="cnt">${shown.length}</span>
+      </div>`;
+
+    shown.forEach(it=>{
+      const qa = document.createElement('div');
+      qa.className='qa';
+      const qText = f ? highlight(it.q, f) : escapeHtml(it.q);
+      const aHtml = it.custom ? nl2br(it.a) : it.a;
+      const verifyBadge = it.verify ? '<span class="verify-badge">⚠ уточнить</span>' : '';
+      const verifyNote = it.verify ? `<div class="verify-note"><strong>Нужно подтвердить:</strong> ${escapeHtml(it.verify)}</div>` : '';
+      qa.innerHTML = `
+        <div class="q">
+          <div class="qt">${qText}${verifyBadge}${it.custom?'<span class="custom-badge">★ свой</span>':''}</div>
+          <svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="a"><div class="a-inner">${aHtml}${verifyNote}${it.custom?`<br><button class="del" data-sec="${s.id}" data-id="${it.id}">Удалить вопрос</button>`:''}</div></div>`;
+      const q = qa.querySelector('.q');
+      const a = qa.querySelector('.a');
+      q.onclick = ()=>{
+        const open = qa.classList.toggle('open');
+        a.style.maxHeight = open ? a.scrollHeight+'px' : '0';
+      };
+      sec.appendChild(qa);
+    });
+    content.appendChild(sec);
+  });
+
+  // ---- verify checklist at bottom (only when not filtering) ----
+  if(!f){
+    const checks = [];
+    SECTIONS.forEach(s=>{
+      s.items.forEach(it=>{ if(it.verify) checks.push({sec:s.title, q:it.q, why:it.verify}); });
+    });
+    if(checks.length){
+      const box = document.createElement('section');
+      box.className='sec'; box.id='sec-verify';
+      box.innerHTML = `<div class="checklist">
+        <div class="ch-head"><div class="ico">⚠</div><h2>На уточнении — спросить у руководителя</h2></div>
+        <div class="ch-sub">Эти пункты я не смог подтвердить по официальным источникам. Свериться с Дарьей Фёдоровной / коллегами и отметить галочкой.</div>
+        ${checks.map((c,i)=>`
+          <div class="ch-item">
+            <div class="ch-check" data-ci="${i}"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.5"><polyline points="20 6 9 17 4 12"/></svg></div>
+            <div class="ch-body" data-cb="${i}">
+              <div class="ch-q"><span class="loc">${c.sec}</span>${escapeHtml(c.q)}</div>
+              <div class="ch-why">${escapeHtml(c.why)}</div>
+            </div>
+          </div>`).join('')}
+      </div>`;
+      content.appendChild(box);
+    }
+  }
+
+  if(totalShown===0){
+    content.innerHTML = `<div class="empty">
+      <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <p>Ничего не нашлось по запросу «${escapeHtml(filter)}».<br>Можно <a href="#" id="addfromhere" style="color:var(--orange-dk)">добавить этот вопрос</a> в справочник.</p>
+    </div>`;
+    const af = document.getElementById('addfromhere');
+    if(af) af.onclick=(e)=>{e.preventDefault(); openModal(filter);};
+  }
+
+  content.querySelectorAll('.del').forEach(b=>{
+    b.onclick=(e)=>{ e.stopPropagation(); delCustom(b.dataset.sec, b.dataset.id); };
+  });
+
+  // checklist checkbox state
+  content.querySelectorAll('.ch-check').forEach(box=>{
+    const i = box.dataset.ci;
+    const body = content.querySelector(`.ch-body[data-cb="${i}"]`);
+    if(checkState[i]){ box.classList.add('done'); body.classList.add('done'); }
+    box.onclick = async ()=>{
+      const done = box.classList.toggle('done');
+      body.classList.toggle('done', done);
+      checkState[i] = done;
+      await saveChecks();
+    };
+  });
+  updateCount();
+}
+
+function highlight(text, f){
+  const esc = escapeHtml(text);
+  const i = esc.toLowerCase().indexOf(f.toLowerCase());
+  if(i<0) return esc;
+  return esc.slice(0,i)+'<mark>'+esc.slice(i,i+f.length)+'</mark>'+esc.slice(i+f.length);
+}
+
+function updateCount(){
+  const n = Object.values(customItems).reduce((s,a)=>s+a.length,0);
+  const el = document.getElementById('customcount');
+  el.innerHTML = n ? `<span class="dot" style="background:var(--orange)"></span> Своих вопросов: <strong style="color:var(--ink);margin-left:3px">${n}</strong>` : '';
+}
+
+// ---------- MODAL ----------
+const modalbg = document.getElementById('modalbg');
+function openModal(prefillQ=''){
+  document.getElementById('m-q').value = prefillQ;
+  document.getElementById('m-a').value = '';
+  modalbg.classList.add('show');
+  document.getElementById('m-q').focus();
+}
+function closeModal(){ modalbg.classList.remove('show'); }
+
+document.getElementById('addbtn').onclick = ()=>openModal();
+document.getElementById('m-cancel').onclick = closeModal;
+modalbg.onclick = (e)=>{ if(e.target===modalbg) closeModal(); };
+
+document.getElementById('m-save').onclick = async ()=>{
+  const sec = mSection.value;
+  const q = document.getElementById('m-q').value.trim();
+  const a = document.getElementById('m-a').value.trim();
+  if(!q || !a){ toast('Заполните вопрос и ответ'); return; }
+  if(!customItems[sec]) customItems[sec]=[];
+  customItems[sec].push({q, a, id:'c'+Date.now()});
+  await saveCustom();
+  closeModal();
+  render(document.getElementById('search').value);
+  toast('Вопрос сохранён ★');
+  document.getElementById('sec-'+sec).scrollIntoView();
+};
+
+async function delCustom(sec, id){
+  if(!confirm('Удалить этот вопрос?')) return;
+  customItems[sec] = (customItems[sec]||[]).filter(x=>x.id!==id);
+  if(customItems[sec].length===0) delete customItems[sec];
+  await saveCustom();
+  render(document.getElementById('search').value);
+  toast('Вопрос удалён');
+}
+
+// ---------- TOAST ----------
+let toastT;
+function toast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  clearTimeout(toastT);
+  toastT = setTimeout(()=>t.classList.remove('show'), 2200);
+}
+
+// ---------- SEARCH ----------
+document.getElementById('search').oninput = (e)=>render(e.target.value);
+
+// ---------- MOBILE SIDEBAR ----------
+const sidebar = document.getElementById('sidebar');
+const scrim = document.getElementById('scrim');
+function closeSidebar(){ sidebar.classList.remove('open'); scrim.classList.remove('show'); }
+document.getElementById('menubtn').onclick = ()=>{ sidebar.classList.add('open'); scrim.classList.add('show'); };
+scrim.onclick = closeSidebar;
+
+// keyboard: / to focus search, Esc to close modal
+document.addEventListener('keydown',(e)=>{
+  if(e.key==='Escape') closeModal();
+  if(e.key==='/' && document.activeElement.tagName!=='INPUT' && document.activeElement.tagName!=='TEXTAREA'){
+    e.preventDefault(); document.getElementById('search').focus();
+  }
+});
+
+// ---------- INIT ----------
+(async ()=>{
+  await loadCustom();
+  buildNav();
+  render();
+})();
+</script>

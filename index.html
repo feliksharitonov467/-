@@ -42,6 +42,9 @@
   .search svg{position:absolute;left:16px;top:50%;transform:translateY(-50%);color:var(--lgrey)}
   .addbtn{padding:14px 18px;background:var(--navy);color:#fff;border:none;border-radius:12px;font-size:13.5px;font-weight:600;cursor:pointer;white-space:nowrap;font-family:inherit;display:flex;align-items:center;gap:7px;transition:background .15s}
   .addbtn:hover{background:var(--navy2)}
+  .datesbtn{padding:14px 16px;background:var(--card);color:var(--navy);border:1.5px solid var(--line);border-radius:12px;font-size:13.5px;font-weight:600;cursor:pointer;white-space:nowrap;font-family:inherit;display:flex;align-items:center;gap:7px;transition:border-color .15s,color .15s}
+  .datesbtn:hover{border-color:var(--orange);color:var(--orange-dk)}
+  .datesbtn svg{color:var(--orange)}
   .meta{display:flex;gap:18px;margin-top:13px;font-size:12px;color:var(--grey);flex-wrap:wrap}
   .meta span{display:flex;align-items:center;gap:6px}
   .dot{width:6px;height:6px;border-radius:50%;background:var(--green)}
@@ -103,6 +106,37 @@
   .btn-ghost:hover{border-color:var(--lgrey)}
   .btn-primary{padding:11px 20px;background:var(--orange);color:#fff;border:none;border-radius:10px;font-size:13.5px;font-weight:600;cursor:pointer;font-family:inherit}
   .btn-primary:hover{background:var(--orange-dk)}
+
+  /* dates drawer */
+  .drawer-bg{position:fixed;inset:0;background:rgba(19,19,42,.5);backdrop-filter:blur(3px);display:none;z-index:90}
+  .drawer-bg.show{display:block}
+  .drawer{position:absolute;top:0;right:-460px;width:440px;max-width:90vw;height:100%;background:var(--bg);box-shadow:-10px 0 40px rgba(0,0,0,.2);display:flex;flex-direction:column;transition:right .28s cubic-bezier(.4,0,.2,1)}
+  .drawer-bg.show .drawer{right:0}
+  .drawer-head{display:flex;align-items:flex-start;justify-content:space-between;padding:24px 24px 16px;border-bottom:1px solid var(--line)}
+  .drawer-head h3{font-size:19px;font-weight:750;color:var(--navy)}
+  .drawer-sub{font-size:12px;color:var(--grey);margin-top:4px}
+  .drawer-close{background:none;border:none;color:var(--lgrey);cursor:pointer;padding:4px;border-radius:8px}
+  .drawer-close:hover{background:var(--line);color:var(--ink)}
+  .drawer-add{padding:14px 24px;border-bottom:1px solid var(--line)}
+  .drawer-add .btn-primary{width:100%}
+  .drawer-body{flex:1;overflow-y:auto;padding:18px 24px 40px}
+  .date-group{margin-bottom:26px}
+  .date-group-title{font-size:11px;text-transform:uppercase;letter-spacing:1.3px;font-weight:700;color:var(--orange-dk);margin-bottom:12px;display:flex;align-items:center;gap:8px}
+  .date-group-title .gline{flex:1;height:1px;background:var(--line)}
+  .date-item{display:flex;gap:14px;padding:13px 0;border-top:1px solid var(--line);position:relative}
+  .date-item:first-of-type{border-top:none}
+  .date-item.past{opacity:.5}
+  .date-item.next .date-when{color:var(--orange-dk)}
+  .date-when{flex-shrink:0;width:96px;font-size:13.5px;font-weight:700;color:var(--navy);line-height:1.35}
+  .date-main{flex:1}
+  .date-label{font-size:14px;color:var(--ink);line-height:1.4}
+  .date-badge-next{display:inline-block;background:var(--tint);color:var(--orange-dk);font-size:10px;font-weight:700;padding:1px 7px;border-radius:5px;margin-top:5px;letter-spacing:.4px}
+  .date-acts{display:flex;gap:4px;opacity:0;transition:opacity .15s}
+  .date-item:hover .date-acts{opacity:1}
+  .date-acts button{background:none;border:none;cursor:pointer;font-size:11px;color:var(--lgrey);padding:3px 6px;border-radius:6px;font-family:inherit}
+  .date-acts .d-edit:hover{background:var(--tint);color:var(--orange-dk)}
+  .date-acts .d-del:hover{background:#fbecea;color:#c0392b}
+  .drawer-empty{text-align:center;color:var(--lgrey);font-size:13.5px;padding:30px 10px}
 
   .toast{position:fixed;bottom:26px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--navy);color:#fff;padding:13px 22px;border-radius:11px;font-size:13.5px;font-weight:500;box-shadow:0 10px 30px rgba(0,0,0,.25);transition:transform .3s;z-index:200;display:flex;align-items:center;gap:9px}
   .toast.show{transform:translateX(-50%) translateY(0)}
@@ -177,6 +211,10 @@
           <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
           <input id="search" placeholder="Поиск по вопросам — например «общежитие», «ДВИ», «кредит»…" autocomplete="off">
         </div>
+        <button class="datesbtn" id="datesbtn">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          Даты
+        </button>
         <button class="addbtn" id="addbtn">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
           Свой вопрос
@@ -213,6 +251,50 @@
     <div class="modal-actions">
       <button class="btn-ghost" id="m-cancel">Отмена</button>
       <button class="btn-primary" id="m-save">Сохранить вопрос</button>
+    </div>
+  </div>
+</div>
+
+<!-- Dates drawer -->
+<div class="drawer-bg" id="datesbg">
+  <div class="drawer" id="datesdrawer">
+    <div class="drawer-head">
+      <div>
+        <h3>Важные даты и дедлайны</h3>
+        <p class="drawer-sub">Приёмная кампания 2026 · общие для всех консультантов</p>
+      </div>
+      <button class="drawer-close" id="dates-close" aria-label="Закрыть">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="drawer-add">
+      <button class="btn-primary" id="date-add">+ Добавить дату</button>
+    </div>
+    <div class="drawer-body" id="dates-body"></div>
+  </div>
+</div>
+
+<!-- Date add/edit modal -->
+<div class="modal-bg" id="datemodalbg">
+  <div class="modal">
+    <h3 id="d-title">Добавить дату</h3>
+    <p class="msub">Сохранится для всех консультантов.</p>
+    <label>Программа</label>
+    <select id="d-track">
+      <option value="bach">Бакалавриат</option>
+      <option value="mag">Магистратура</option>
+      <option value="common">Общее</option>
+    </select>
+    <label>Дата (текстом)</label>
+    <input id="d-date" placeholder="Например: 15 июля или 11–25 июля">
+    <div class="hint">Для сортировки укажите день месяца ниже (если дата — диапазон, ставьте день начала).</div>
+    <label>Для сортировки — порядковый день (день.месяц)</label>
+    <input id="d-sort" placeholder="Например: 15.07" autocomplete="off">
+    <label>Событие</label>
+    <input id="d-label" placeholder="Например: Дедлайн подачи документов">
+    <div class="modal-actions">
+      <button class="btn-ghost" id="d-cancel">Отмена</button>
+      <button class="btn-primary" id="d-save">Сохранить</button>
     </div>
   </div>
 </div>
@@ -373,10 +455,30 @@ const SECTIONS = [
 // ---------- STATE ----------
 let customItems = {};   // {sectionId: [{q,a,id}]}  — общие вопросы (Firebase)
 let overrides = {};     // {builtinId: {q,a,author}} — правки встроенных вопросов (Firebase)
+let datesData = {};     // {id: {track,date,sort,label}} — даты (Firebase)
 let checkState = {};    // {checkIndex: bool}        — личные галочки (localStorage)
 const STORE_KEY = 'vshb_faq_custom_v1';   // запасное хранилище, если Firebase недоступен
 const OVR_KEY  = 'vshb_faq_overrides_v1';
+const DATES_KEY = 'vshb_faq_dates_v1';
 const CHECK_KEY = 'vshb_faq_checks_v1';
+
+// Даты по умолчанию (из FAQ и файла руководителя). sort = MMDD для сортировки.
+const DEFAULT_DATES = {
+  d_b1:{track:'bach', date:'20 июня — 15 июля', sort:'0620', label:'Подача документов (граждане РФ)'},
+  d_b2:{track:'bach', date:'20–25 июня',        sort:'0620', label:'Подача документов для иностранцев'},
+  d_b3:{track:'bach', date:'1–25 июня',         sort:'0601', label:'Открыт личный кабинет webanketa.msu.ru'},
+  d_b4:{track:'bach', date:'11–25 июля',        sort:'0711', label:'ДВИ по математике (6 потоков)'},
+  d_b5:{track:'bach', date:'24–25 июля',        sort:'0724', label:'Результаты ДВИ (единовременно)'},
+  d_b6:{track:'bach', date:'25 июля',           sort:'0725', label:'Дедлайн для БВИ (до 17:00)'},
+  d_b7:{track:'bach', date:'27 июля',           sort:'0727', label:'Публикация конкурсных списков'},
+  d_b8:{track:'bach', date:'5 августа',         sort:'0805', label:'Дедлайн заявки на общежитие'},
+  d_b9:{track:'bach', date:'15 августа',        sort:'0815', label:'Договор + информирование (до 12:00)'},
+  d_b10:{track:'bach', date:'28 августа',       sort:'0828', label:'Начало заселения в общежитие'},
+  d_m1:{track:'mag', date:'20 июня — 10 августа', sort:'0620', label:'Подача документов (РФ и ИН)'},
+  d_m2:{track:'mag', date:'июль',                 sort:'0715', label:'Экзамен по менеджменту (дистанционно)'},
+  d_c1:{track:'common', date:'20.06 — 30.08', sort:'0620', label:'Работа приёмной комиссии (10:00–18:00, кроме вс)'},
+  d_c2:{track:'common', date:'1 сентября',    sort:'0901', label:'Начало учебного года'},
+};
 
 // Стабильный короткий ID из строки (для встроенных вопросов)
 function hashId(str){
@@ -421,10 +523,34 @@ async function loadCustom(){
       overrides = snap.val() || {};
       try{ render(document.getElementById('search').value); }catch(e){}
     }, (err)=>{ console.warn('overrides read error:', err); loadLocalOverrides(); });
+    // Даты: при первом запуске (база пустая) засеваем значениями по умолчанию
+    fbDB.ref('dates').on('value', (snap)=>{
+      const val = snap.val();
+      if(val===null && !datesSeeded){
+        datesSeeded = true;
+        fbDB.ref('dates').set(DEFAULT_DATES).catch(e=>console.warn('seed dates failed',e));
+        datesData = {...DEFAULT_DATES};
+      } else {
+        datesData = val || {};
+      }
+      try{ renderDates(); }catch(e){}
+    }, (err)=>{ console.warn('dates read error:', err); loadLocalDates(); });
   } else {
     loadLocalCustom();
     loadLocalOverrides();
+    loadLocalDates();
   }
+}
+let datesSeeded = false;
+function loadLocalDates(){
+  try{
+    const r = localStorage.getItem(DATES_KEY);
+    datesData = r ? JSON.parse(r) : {...DEFAULT_DATES};
+  }catch(e){ datesData = {...DEFAULT_DATES}; }
+  try{ renderDates(); }catch(e){}
+}
+function saveLocalDates(){
+  try{ localStorage.setItem(DATES_KEY, JSON.stringify(datesData)); }catch(e){}
 }
 function loadLocalCustom(){
   try{
@@ -771,6 +897,119 @@ function toast(msg){
   toastT = setTimeout(()=>t.classList.remove('show'), 2200);
 }
 
+// ---------- DATES DRAWER ----------
+const datesbg = document.getElementById('datesbg');
+const TRACKS = [
+  {key:'bach',   title:'Бакалавриат'},
+  {key:'mag',    title:'Магистратура'},
+  {key:'common', title:'Общее'},
+];
+// текущий MMDD для подсветки прошедшего/ближайшего
+function todayMMDD(){
+  const d = new Date();
+  return String(d.getMonth()+1).padStart(2,'0') + String(d.getDate()).padStart(2,'0');
+}
+function renderDates(){
+  const body = document.getElementById('dates-body');
+  if(!body) return;
+  const items = Object.entries(datesData).map(([id,v])=>({id, ...v}));
+  if(items.length===0){
+    body.innerHTML = '<div class="drawer-empty">Дат пока нет. Нажмите «Добавить дату».</div>';
+    return;
+  }
+  const tnow = todayMMDD();
+  let html = '';
+  TRACKS.forEach(tr=>{
+    const group = items.filter(x=>x.track===tr.key)
+      .sort((a,b)=>String(a.sort||'9999').localeCompare(String(b.sort||'9999')));
+    if(group.length===0) return;
+    // ближайшая будущая дата в группе
+    const nextItem = group.find(x=>String(x.sort||'9999') >= tnow);
+    html += `<div class="date-group">
+      <div class="date-group-title">${tr.title}<span class="gline"></span></div>`;
+    group.forEach(x=>{
+      const past = String(x.sort||'9999') < tnow;
+      const isNext = nextItem && x.id===nextItem.id;
+      html += `<div class="date-item ${past?'past':''} ${isNext?'next':''}">
+        <div class="date-when">${escapeHtml(x.date||'')}</div>
+        <div class="date-main">
+          <div class="date-label">${escapeHtml(x.label||'')}</div>
+          ${isNext?'<span class="date-badge-next">БЛИЖАЙШЕЕ</span>':''}
+        </div>
+        <div class="date-acts">
+          <button class="d-edit" data-id="${x.id}">✎</button>
+          <button class="d-del" data-id="${x.id}">✕</button>
+        </div>
+      </div>`;
+    });
+    html += `</div>`;
+  });
+  body.innerHTML = html;
+  body.querySelectorAll('.d-edit').forEach(b=>{ b.onclick=()=>openDateModal(b.dataset.id); });
+  body.querySelectorAll('.d-del').forEach(b=>{ b.onclick=()=>delDate(b.dataset.id); });
+}
+function openDrawer(){ datesbg.classList.add('show'); renderDates(); }
+function closeDrawer(){ datesbg.classList.remove('show'); }
+document.getElementById('datesbtn').onclick = openDrawer;
+document.getElementById('dates-close').onclick = closeDrawer;
+datesbg.onclick = (e)=>{ if(e.target===datesbg) closeDrawer(); };
+
+// ----- date add/edit modal -----
+const datemodalbg = document.getElementById('datemodalbg');
+let dateEditId = null;
+function openDateModal(id=null){
+  dateEditId = id;
+  document.getElementById('d-title').textContent = id ? 'Редактировать дату' : 'Добавить дату';
+  const v = id ? datesData[id] : {track:'bach', date:'', sort:'', label:''};
+  document.getElementById('d-track').value = v.track||'bach';
+  document.getElementById('d-date').value = v.date||'';
+  document.getElementById('d-sort').value = sortToInput(v.sort||'');
+  document.getElementById('d-label').value = v.label||'';
+  datemodalbg.classList.add('show');
+  document.getElementById('d-date').focus();
+}
+function closeDateModal(){ datemodalbg.classList.remove('show'); dateEditId=null; }
+// "0715" <-> "15.07"
+function sortToInput(s){ if(!s||s.length!==4) return ''; return s.slice(2)+'.'+s.slice(0,2); }
+function inputToSort(s){
+  const m = String(s).trim().match(/^(\d{1,2})[.\/-](\d{1,2})$/);
+  if(!m) return '9999';
+  return m[2].padStart(2,'0')+m[1].padStart(2,'0'); // MMDD
+}
+document.getElementById('date-add').onclick = ()=>openDateModal();
+document.getElementById('d-cancel').onclick = closeDateModal;
+datemodalbg.onclick = (e)=>{ if(e.target===datemodalbg) closeDateModal(); };
+document.getElementById('d-save').onclick = async ()=>{
+  const track = document.getElementById('d-track').value;
+  const date  = document.getElementById('d-date').value.trim();
+  const label = document.getElementById('d-label').value.trim();
+  const sort  = inputToSort(document.getElementById('d-sort').value);
+  if(!date || !label){ toast('Заполните дату и событие'); return; }
+  const payload = {track, date, label, sort};
+  if(fbReady){
+    try{
+      if(dateEditId) await fbDB.ref('dates/'+dateEditId).set(payload);
+      else await fbDB.ref('dates').push(payload);
+    }catch(e){ toast('Ошибка сети'); console.warn(e); return; }
+  } else {
+    const id = dateEditId || ('d'+Date.now());
+    datesData[id] = payload;
+    saveLocalDates(); renderDates();
+  }
+  closeDateModal();
+  toast(dateEditId ? 'Дата изменена' : 'Дата добавлена');
+};
+async function delDate(id){
+  if(!confirm('Удалить эту дату для всех?')) return;
+  if(fbReady && !String(id).startsWith('d')){
+    try{ await fbDB.ref('dates/'+id).remove(); }
+    catch(e){ toast('Ошибка сети'); console.warn(e); return; }
+  } else {
+    delete datesData[id]; saveLocalDates(); renderDates();
+  }
+  toast('Дата удалена');
+}
+
 // ---------- SEARCH ----------
 document.getElementById('search').oninput = (e)=>render(e.target.value);
 
@@ -783,7 +1022,7 @@ scrim.onclick = closeSidebar;
 
 // keyboard: / to focus search, Esc to close modal
 document.addEventListener('keydown',(e)=>{
-  if(e.key==='Escape') closeModal();
+  if(e.key==='Escape'){ closeModal(); closeDateModal(); closeDrawer(); }
   if(e.key==='/' && document.activeElement.tagName!=='INPUT' && document.activeElement.tagName!=='TEXTAREA'){
     e.preventDefault(); document.getElementById('search').focus();
   }

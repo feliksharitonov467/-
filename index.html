@@ -70,6 +70,7 @@
   .qa .a-inner li{margin-bottom:5px}
   .qa .a-inner .num-hl{background:var(--tint2);border:1px solid var(--tint);border-radius:9px;padding:11px 14px;margin:11px 0 3px;color:var(--ink);font-size:13.5px}
   .custom-badge{display:inline-flex;align-items:center;gap:4px;background:#eaf5ef;color:var(--green);font-size:10.5px;font-weight:700;padding:2px 8px;border-radius:5px;margin-left:9px;letter-spacing:.3px;vertical-align:middle}
+  .author-line{margin-top:11px;font-size:12px;color:var(--lgrey);font-style:italic}
   .verify-badge{display:inline-flex;align-items:center;gap:4px;background:#fff4d6;color:#9a6700;font-size:10.5px;font-weight:700;padding:2px 8px;border-radius:5px;margin-left:9px;letter-spacing:.3px;vertical-align:middle}
   .verify-note{background:#fffbf0;border:1px solid #ffe9b0;border-left:3px solid #e0a800;border-radius:9px;padding:10px 13px;margin:11px 0 3px;color:#7a5b00;font-size:13px;line-height:1.5}
   .verify-note strong{color:#5e4600}
@@ -193,6 +194,9 @@
     <p class="msub">Вопрос станет общим для всех консультантов — появится у всех после обновления страницы.</p>
     <label>Раздел</label>
     <select id="m-section"></select>
+    <label>Ваше имя</label>
+    <input id="m-author" placeholder="Например: Феликс" autocomplete="off">
+    <div class="hint">Запомнится в этом браузере — вписывать каждый раз не нужно.</div>
     <label>Вопрос</label>
     <input id="m-q" placeholder="Например: Можно ли перевестись из другого вуза на 1 курс?">
     <label>Ответ</label>
@@ -370,7 +374,7 @@ function groupItems(flat){
   Object.entries(flat||{}).forEach(([key,val])=>{
     if(!val || !val.sec) return;
     if(!out[val.sec]) out[val.sec] = [];
-    out[val.sec].push({q:val.q, a:val.a, id:key});
+    out[val.sec].push({q:val.q, a:val.a, id:key, author:val.author||''});
   });
   return out;
 }
@@ -466,12 +470,13 @@ function render(filter=''){
       const aHtml = it.custom ? nl2br(it.a) : it.a;
       const verifyBadge = it.verify ? '<span class="verify-badge">⚠ уточнить</span>' : '';
       const verifyNote = it.verify ? `<div class="verify-note"><strong>Нужно подтвердить:</strong> ${escapeHtml(it.verify)}</div>` : '';
+      const authorLine = (it.custom && it.author) ? `<div class="author-line">Добавил: ${escapeHtml(it.author)}</div>` : '';
       qa.innerHTML = `
         <div class="q">
           <div class="qt">${qText}${verifyBadge}${it.custom?'<span class="custom-badge">★ общий</span>':''}</div>
           <svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="6 9 12 15 18 9"/></svg>
         </div>
-        <div class="a"><div class="a-inner">${aHtml}${verifyNote}${it.custom?`<br><button class="del" data-sec="${s.id}" data-id="${it.id}">Удалить вопрос</button>`:''}</div></div>`;
+        <div class="a"><div class="a-inner">${aHtml}${verifyNote}${authorLine}${it.custom?`<br><button class="del" data-sec="${s.id}" data-id="${it.id}">Удалить вопрос</button>`:''}</div></div>`;
       const q = qa.querySelector('.q');
       const a = qa.querySelector('.a');
       q.onclick = ()=>{
@@ -551,11 +556,16 @@ function updateCount(){
 
 // ---------- MODAL ----------
 const modalbg = document.getElementById('modalbg');
+const AUTHOR_KEY = 'vshb_faq_author';
 function openModal(prefillQ=''){
   document.getElementById('m-q').value = prefillQ;
   document.getElementById('m-a').value = '';
+  // подставляем сохранённое имя
+  try{ document.getElementById('m-author').value = localStorage.getItem(AUTHOR_KEY) || ''; }catch(e){}
   modalbg.classList.add('show');
-  document.getElementById('m-q').focus();
+  // если имя ещё не введено — фокус на имя, иначе сразу на вопрос
+  const hasName = document.getElementById('m-author').value.trim();
+  document.getElementById(hasName ? 'm-q' : 'm-author').focus();
 }
 function closeModal(){ modalbg.classList.remove('show'); }
 
@@ -567,11 +577,14 @@ document.getElementById('m-save').onclick = async ()=>{
   const sec = mSection.value;
   const q = document.getElementById('m-q').value.trim();
   const a = document.getElementById('m-a').value.trim();
+  const author = document.getElementById('m-author').value.trim();
   if(!q || !a){ toast('Заполните вопрос и ответ'); return; }
+  // запоминаем имя для следующего раза
+  try{ if(author) localStorage.setItem(AUTHOR_KEY, author); }catch(e){}
 
   if(fbReady){
     try{
-      await fbDB.ref('questions').push({ sec, q, a, ts: Date.now() });
+      await fbDB.ref('questions').push({ sec, q, a, author, ts: Date.now() });
       // listener сам перерисует у всех; здесь только UI-отклик
     }catch(e){
       toast('Ошибка сети — вопрос не сохранён');
@@ -579,7 +592,7 @@ document.getElementById('m-save').onclick = async ()=>{
     }
   } else {
     if(!customItems[sec]) customItems[sec]=[];
-    customItems[sec].push({q, a, id:'c'+Date.now()});
+    customItems[sec].push({q, a, author, id:'c'+Date.now()});
     try{ localStorage.setItem(STORE_KEY, JSON.stringify(customItems)); }catch(e){}
     render(document.getElementById('search').value);
   }

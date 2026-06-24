@@ -74,7 +74,13 @@
   .verify-badge{display:inline-flex;align-items:center;gap:4px;background:#fff4d6;color:#9a6700;font-size:10.5px;font-weight:700;padding:2px 8px;border-radius:5px;margin-left:9px;letter-spacing:.3px;vertical-align:middle}
   .verify-note{background:#fffbf0;border:1px solid #ffe9b0;border-left:3px solid #e0a800;border-radius:9px;padding:10px 13px;margin:11px 0 3px;color:#7a5b00;font-size:13px;line-height:1.5}
   .verify-note strong{color:#5e4600}
-  .qa .del{background:none;border:none;color:var(--lgrey);cursor:pointer;font-size:12px;padding:4px 8px;border-radius:6px;margin-left:auto;font-family:inherit}
+  .qa .del{background:none;border:none;color:var(--lgrey);cursor:pointer;font-size:12px;padding:4px 8px;border-radius:6px;font-family:inherit}
+  .qa-actions{display:flex;gap:6px;margin-top:14px;flex-wrap:wrap}
+  .qa .edit,.qa .reset{background:none;border:1px solid var(--line);color:var(--grey);cursor:pointer;font-size:12px;padding:4px 11px;border-radius:7px;font-family:inherit;transition:border-color .15s,color .15s}
+  .qa .edit:hover{border-color:var(--orange);color:var(--orange-dk)}
+  .qa .reset:hover{border-color:var(--lgrey);color:var(--ink)}
+  .qa .del:hover{background:#fbecea;color:#c0392b}
+  .edited-badge{display:inline-flex;align-items:center;gap:4px;background:#eef2ff;color:#4356b8;font-size:10.5px;font-weight:700;padding:2px 8px;border-radius:5px;margin-left:9px;letter-spacing:.3px;vertical-align:middle}
   .qa .del:hover{background:#fbecea;color:#c0392b}
 
   .empty{text-align:center;padding:60px 20px;color:var(--lgrey)}
@@ -187,13 +193,15 @@
   </main>
 </div>
 
-<!-- Add modal -->
+<!-- Add / Edit modal -->
 <div class="modal-bg" id="modalbg">
   <div class="modal">
-    <h3>Добавить свой вопрос</h3>
-    <p class="msub">Вопрос станет общим для всех консультантов — появится у всех после обновления страницы.</p>
-    <label>Раздел</label>
-    <select id="m-section"></select>
+    <h3 id="m-title">Добавить свой вопрос</h3>
+    <p class="msub" id="m-sub">Вопрос станет общим для всех консультантов — появится у всех после обновления страницы.</p>
+    <div id="m-section-row">
+      <label>Раздел</label>
+      <select id="m-section"></select>
+    </div>
     <label>Ваше имя</label>
     <input id="m-author" placeholder="Например: Феликс" autocomplete="off">
     <div class="hint">Запомнится в этом браузере — вписывать каждый раз не нужно.</div>
@@ -364,9 +372,22 @@ const SECTIONS = [
 
 // ---------- STATE ----------
 let customItems = {};   // {sectionId: [{q,a,id}]}  — общие вопросы (Firebase)
+let overrides = {};     // {builtinId: {q,a,author}} — правки встроенных вопросов (Firebase)
 let checkState = {};    // {checkIndex: bool}        — личные галочки (localStorage)
 const STORE_KEY = 'vshb_faq_custom_v1';   // запасное хранилище, если Firebase недоступен
+const OVR_KEY  = 'vshb_faq_overrides_v1';
 const CHECK_KEY = 'vshb_faq_checks_v1';
+
+// Стабильный короткий ID из строки (для встроенных вопросов)
+function hashId(str){
+  let h = 5381;
+  for(let i=0;i<str.length;i++){ h = ((h<<5)+h) ^ str.charCodeAt(i); }
+  return 'b'+(h>>>0).toString(36);
+}
+// Присваиваем каждому встроенному вопросу стабильный ID (один раз)
+SECTIONS.forEach(s=>{
+  s.items.forEach(it=>{ it._bid = hashId(s.id+'|'+it.q); });
+});
 
 // Превращаем плоский список записей Firebase в {sectionId:[...]}
 function groupItems(flat){
@@ -395,8 +416,14 @@ async function loadCustom(){
       console.warn('Firebase read error, fallback to localStorage:', err);
       loadLocalCustom();
     });
+    // Правки встроенных вопросов
+    fbDB.ref('overrides').on('value', (snap)=>{
+      overrides = snap.val() || {};
+      try{ render(document.getElementById('search').value); }catch(e){}
+    }, (err)=>{ console.warn('overrides read error:', err); loadLocalOverrides(); });
   } else {
     loadLocalCustom();
+    loadLocalOverrides();
   }
 }
 function loadLocalCustom(){
@@ -404,6 +431,12 @@ function loadLocalCustom(){
     const r = localStorage.getItem(STORE_KEY);
     if(r) customItems = JSON.parse(r);
   }catch(e){ customItems = {}; }
+}
+function loadLocalOverrides(){
+  try{
+    const r = localStorage.getItem(OVR_KEY);
+    if(r) overrides = JSON.parse(r);
+  }catch(e){ overrides = {}; }
 }
 async function saveChecks(){
   try{ localStorage.setItem(CHECK_KEY, JSON.stringify(checkState)); }
@@ -446,8 +479,15 @@ function render(filter=''){
 
   SECTIONS.forEach(s=>{
     const custom = (customItems[s.id]||[]);
+    const builtins = s.items.map(it=>{
+      const ovr = overrides[it._bid];
+      if(ovr){
+        return {...it, q:ovr.q, a:ovr.a, _edited:true, _editAuthor:ovr.author||'', custom:false};
+      }
+      return {...it, custom:false};
+    });
     const all = [
-      ...s.items.map(it=>({...it, custom:false})),
+      ...builtins,
       ...custom.map(it=>({...it, custom:true}))
     ];
     const shown = f ? all.filter(it =>
@@ -467,16 +507,28 @@ function render(filter=''){
       const qa = document.createElement('div');
       qa.className='qa';
       const qText = f ? highlight(it.q, f) : escapeHtml(it.q);
-      const aHtml = it.custom ? nl2br(it.a) : it.a;
+      // правленый встроенный ответ хранится как простой текст → nl2br; оригинальный — это HTML
+      const aHtml = (it.custom || it._edited) ? nl2br(it.a) : it.a;
       const verifyBadge = it.verify ? '<span class="verify-badge">⚠ уточнить</span>' : '';
       const verifyNote = it.verify ? `<div class="verify-note"><strong>Нужно подтвердить:</strong> ${escapeHtml(it.verify)}</div>` : '';
-      const authorLine = (it.custom && it.author) ? `<div class="author-line">Добавил: ${escapeHtml(it.author)}</div>` : '';
+      const authorLine = (it.custom && it.author) ? `<div class="author-line">Добавил: ${escapeHtml(it.author)}</div>`
+                        : (it._edited && it._editAuthor) ? `<div class="author-line">Изменил: ${escapeHtml(it._editAuthor)}</div>` : '';
+      const editedBadge = it._edited ? '<span class="edited-badge">✎ изменён</span>' : '';
+      // данные для кнопки редактирования
+      const editAttrs = it.custom
+        ? `data-mode="custom" data-sec="${s.id}" data-id="${it.id}"`
+        : `data-mode="builtin" data-sec="${s.id}" data-bid="${it._bid}"`;
+      const actionsRow = `<div class="qa-actions">
+          <button class="edit" ${editAttrs}>✎ Редактировать</button>
+          ${it.custom?`<button class="del" data-sec="${s.id}" data-id="${it.id}">Удалить вопрос</button>`:''}
+          ${it._edited?`<button class="reset" data-bid="${it._bid}">Вернуть оригинал</button>`:''}
+        </div>`;
       qa.innerHTML = `
         <div class="q">
-          <div class="qt">${qText}${verifyBadge}${it.custom?'<span class="custom-badge">★ общий</span>':''}</div>
+          <div class="qt">${qText}${verifyBadge}${editedBadge}${it.custom?'<span class="custom-badge">★ общий</span>':''}</div>
           <svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="6 9 12 15 18 9"/></svg>
         </div>
-        <div class="a"><div class="a-inner">${aHtml}${verifyNote}${authorLine}${it.custom?`<br><button class="del" data-sec="${s.id}" data-id="${it.id}">Удалить вопрос</button>`:''}</div></div>`;
+        <div class="a"><div class="a-inner">${aHtml}${verifyNote}${authorLine}${actionsRow}</div></div>`;
       const q = qa.querySelector('.q');
       const a = qa.querySelector('.a');
       q.onclick = ()=>{
@@ -525,6 +577,12 @@ function render(filter=''){
   content.querySelectorAll('.del').forEach(b=>{
     b.onclick=(e)=>{ e.stopPropagation(); delCustom(b.dataset.sec, b.dataset.id); };
   });
+  content.querySelectorAll('.edit').forEach(b=>{
+    b.onclick=(e)=>{ e.stopPropagation(); openEdit(b.dataset); };
+  });
+  content.querySelectorAll('.reset').forEach(b=>{
+    b.onclick=(e)=>{ e.stopPropagation(); resetBuiltin(b.dataset.bid); };
+  });
 
   // checklist checkbox state
   content.querySelectorAll('.ch-check').forEach(box=>{
@@ -557,35 +615,111 @@ function updateCount(){
 // ---------- MODAL ----------
 const modalbg = document.getElementById('modalbg');
 const AUTHOR_KEY = 'vshb_faq_author';
+let editTarget = null;  // null = режим добавления; иначе {mode, sec, id|bid}
+
+// Превращает HTML встроенного ответа в простой текст для поля редактирования
+function htmlToPlain(html){
+  let t = html
+    .replace(/<div class="num-hl">/g,'\n').replace(/<span class="tag">[^<]*<\/span>/g,'')
+    .replace(/<br\s*\/?>/g,'\n').replace(/<\/(p|div|li)>/g,'\n')
+    .replace(/<li>/g,'• ').replace(/<[^>]+>/g,'')
+    .replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&amp;/g,'&').replace(/&nbsp;/g,' ');
+  return t.replace(/\n{3,}/g,'\n\n').trim();
+}
+
 function openModal(prefillQ=''){
+  editTarget = null;
+  document.getElementById('m-title').textContent = 'Добавить свой вопрос';
+  document.getElementById('m-sub').textContent = 'Вопрос станет общим для всех консультантов — появится у всех после обновления страницы.';
+  document.getElementById('m-section-row').style.display = '';
+  document.getElementById('m-save').textContent = 'Сохранить вопрос';
   document.getElementById('m-q').value = prefillQ;
   document.getElementById('m-a').value = '';
-  // подставляем сохранённое имя
+  document.getElementById('m-q').readOnly = false;
   try{ document.getElementById('m-author').value = localStorage.getItem(AUTHOR_KEY) || ''; }catch(e){}
   modalbg.classList.add('show');
-  // если имя ещё не введено — фокус на имя, иначе сразу на вопрос
   const hasName = document.getElementById('m-author').value.trim();
   document.getElementById(hasName ? 'm-q' : 'm-author').focus();
 }
-function closeModal(){ modalbg.classList.remove('show'); }
+
+function openEdit(ds){
+  // ds — dataset кнопки: {mode:'custom'|'builtin', sec, id?, bid?}
+  if(ds.mode==='custom'){
+    const item = (customItems[ds.sec]||[]).find(x=>x.id===ds.id);
+    if(!item){ toast('Вопрос не найден'); return; }
+    editTarget = {mode:'custom', sec:ds.sec, id:ds.id};
+    document.getElementById('m-q').value = item.q;
+    document.getElementById('m-a').value = item.a;
+    document.getElementById('m-q').readOnly = false;
+  } else {
+    // встроенный: ищем оригинал и текущее переопределение
+    let orig=null, secId=ds.sec;
+    const s = SECTIONS.find(x=>x.id===ds.sec);
+    if(s) orig = s.items.find(x=>x._bid===ds.bid);
+    if(!orig){ toast('Вопрос не найден'); return; }
+    const ovr = overrides[ds.bid];
+    editTarget = {mode:'builtin', sec:ds.sec, bid:ds.bid};
+    document.getElementById('m-q').value = ovr ? ovr.q : orig.q;
+    // ответ: если уже правился — берём правку; иначе конвертируем оригинальный HTML в текст
+    document.getElementById('m-a').value = ovr ? ovr.a : htmlToPlain(orig.a);
+    document.getElementById('m-q').readOnly = false;
+  }
+  document.getElementById('m-title').textContent = 'Редактировать вопрос';
+  document.getElementById('m-sub').textContent = 'Изменения станут общими для всех консультантов.';
+  document.getElementById('m-section-row').style.display = 'none'; // раздел при правке не меняем
+  document.getElementById('m-save').textContent = 'Сохранить изменения';
+  try{ document.getElementById('m-author').value = localStorage.getItem(AUTHOR_KEY) || ''; }catch(e){}
+  modalbg.classList.add('show');
+  document.getElementById('m-a').focus();
+}
+
+function closeModal(){ modalbg.classList.remove('show'); editTarget=null; }
 
 document.getElementById('addbtn').onclick = ()=>openModal();
 document.getElementById('m-cancel').onclick = closeModal;
 modalbg.onclick = (e)=>{ if(e.target===modalbg) closeModal(); };
 
 document.getElementById('m-save').onclick = async ()=>{
-  const sec = mSection.value;
   const q = document.getElementById('m-q').value.trim();
   const a = document.getElementById('m-a').value.trim();
   const author = document.getElementById('m-author').value.trim();
   if(!q || !a){ toast('Заполните вопрос и ответ'); return; }
-  // запоминаем имя для следующего раза
   try{ if(author) localStorage.setItem(AUTHOR_KEY, author); }catch(e){}
 
+  // ----- РЕДАКТИРОВАНИЕ -----
+  if(editTarget){
+    if(editTarget.mode==='custom'){
+      if(fbReady && !String(editTarget.id).startsWith('c')){
+        try{ await fbDB.ref('questions/'+editTarget.id).update({ q, a, author }); }
+        catch(e){ toast('Ошибка сети'); console.warn(e); return; }
+      } else {
+        const arr = customItems[editTarget.sec]||[];
+        const it = arr.find(x=>x.id===editTarget.id);
+        if(it){ it.q=q; it.a=a; it.author=author; }
+        try{ localStorage.setItem(STORE_KEY, JSON.stringify(customItems)); }catch(e){}
+        render(document.getElementById('search').value);
+      }
+    } else { // builtin override
+      const payload = { q, a, author, ts: Date.now() };
+      if(fbReady){
+        try{ await fbDB.ref('overrides/'+editTarget.bid).set(payload); }
+        catch(e){ toast('Ошибка сети'); console.warn(e); return; }
+      } else {
+        overrides[editTarget.bid] = payload;
+        try{ localStorage.setItem(OVR_KEY, JSON.stringify(overrides)); }catch(e){}
+        render(document.getElementById('search').value);
+      }
+    }
+    closeModal();
+    toast('Изменения сохранены ✎');
+    return;
+  }
+
+  // ----- ДОБАВЛЕНИЕ -----
+  const sec = mSection.value;
   if(fbReady){
     try{
       await fbDB.ref('questions').push({ sec, q, a, author, ts: Date.now() });
-      // listener сам перерисует у всех; здесь только UI-отклик
     }catch(e){
       toast('Ошибка сети — вопрос не сохранён');
       console.warn(e); return;
@@ -600,6 +734,19 @@ document.getElementById('m-save').onclick = async ()=>{
   toast('Вопрос сохранён ★');
   setTimeout(()=>{ const el=document.getElementById('sec-'+sec); if(el) el.scrollIntoView(); }, 200);
 };
+
+async function resetBuiltin(bid){
+  if(!confirm('Вернуть оригинальный текст этого вопроса для всех? Правка будет удалена.')) return;
+  if(fbReady){
+    try{ await fbDB.ref('overrides/'+bid).remove(); }
+    catch(e){ toast('Ошибка сети'); console.warn(e); return; }
+  } else {
+    delete overrides[bid];
+    try{ localStorage.setItem(OVR_KEY, JSON.stringify(overrides)); }catch(e){}
+    render(document.getElementById('search').value);
+  }
+  toast('Возвращён оригинал');
+}
 
 async function delCustom(sec, id){
   if(!confirm('Удалить этот вопрос для всех консультантов?')) return;
